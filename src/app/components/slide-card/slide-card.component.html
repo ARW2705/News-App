@@ -1,0 +1,12 @@
+<div class="cards"
+     fxFlex
+     [@slide]="activeCard">
+  <div class="card"
+       fxFlex="grow">
+    <ng-content select="[topCard]"></ng-content>
+  </div>
+  <div class="card"
+       fxFlex="grow">
+    <ng-content select="[catCard]"></ng-content>
+  </div>
+</div>
