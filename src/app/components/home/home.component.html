@@ -1,0 +1,171 @@
+<div class="container" fxLayout="column">
+
+  <app-header></app-header>
+
+  <main class="content"
+        fxFlex="grow"
+        fxLayout="row"
+        fxLayoutAlign="space-around start"
+        fxFlex.lt-sm="0"
+        fxLayout.lt-sm="column"
+        fxLayoutGap.lt-sm="20px">
+
+    <section id="articles-card"
+             fxFlex="65"
+             fxFlex.lt-sm="100"
+             fxFlex.gt-md="50"
+             aria-label="Feature article">
+
+      <ng-container *ngIf="mainArticle && !errMsg">
+        <mat-card>
+          <mat-card-header id="main-article-header">
+            <mat-card-title>
+              {{ mainArticle.title }}
+            </mat-card-title>
+            <mat-card-subtitle>
+              {{ mainArticle.source.name }}
+            </mat-card-subtitle>
+          </mat-card-header>
+          <img id="article-image"
+               mat-card-image
+               (error)="imageError($event)"
+               src="{{ mainArticle.urlToImage }}"
+               alt="{{ mainArticle.title }}">
+          <mat-card-content>
+            <div id="article-content">
+              <h4>{{ mainArticle.author }}</h4>
+              <p>{{ mainArticle.content }}</p>
+              <div fxLayoutAlign="space-between center">
+                <a target="_blank"
+                   href="{{ mainArticle.url }}"
+                   aria-label="Read more about this article">
+                  <button mat-raised-button
+                          color="accent">
+                    Read More
+                  </button>
+                </a>
+                <button *ngIf="mainArticle.category"
+                        mat-raised-button
+                        color="accent"
+                        (click)="navigateToCategory()">
+                  Go to {{ mainArticle.category }}
+                </button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </ng-container>
+      <ng-container *ngIf="!mainArticle && !errMsg">
+        <mat-spinner></mat-spinner>
+      </ng-container>
+      <ng-container *ngIf="errMsg">
+        <app-error-message [error]="errMsg"></app-error-message>
+      </ng-container>
+
+    </section>
+
+    <section id="quickview"
+             fxLayout="column"
+             fxFlex="30"
+             fxFlex.lt-sm="100"
+             aria-label="Quickview">
+
+      <ng-container *ngIf="previewArticles && categoryArticles && !errMsg">
+        <mat-card>
+          <mat-card-header id="quickview-header">
+            <mat-card-title fxLayout="row nowrap"
+                            fxLayoutAlign="space-between center">
+              <button mat-icon-button
+                      class="nav-icon"
+                      [disabled]="currentQuickview == 0"
+                      (click)="slideQuickview('prev')"
+                      aria-label="Change quickview to previous slide">
+                <mat-icon svgIcon="left-nav-arrow"></mat-icon>
+              </button>
+              <div>{{ showQuickview == 'top' ? 'Headlines': 'Categories'}}</div>
+              <button mat-icon-button
+                      class="nav-icon"
+                      [disabled]="currentQuickview == quickviews.length - 1"
+                      (click)="slideQuickview('next')"
+                      aria-label="Change quickview to next slide">
+                <mat-icon svgIcon="right-nav-arrow"></mat-icon>
+              </button>
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content id="quickview-content">
+            <app-slide-card [activeCard]="showQuickview">
+              <div topCard
+                   fxLayout="column"
+                   fxLayoutAlign="space-between start"
+                   id="quickview-headline-content"
+                   *ngIf="previewArticles.length && !errMsg"
+                   aria-label="Top Headlines">
+                <img id="preview-image"
+                     (error)="imageError($event)"
+                     src="{{ previewArticles[0].urlToImage }}"
+                     alt="{{ previewArticles[0].title }}">
+                <a class="article-preview"
+                   *ngFor="let article of previewArticles; index as i"
+                   (click)="selectArticle('top', i)"
+                   attr.aria-label="Expand article {{ article.title }}">
+                  <h3>
+                    {{ article.title }}
+                  </h3>
+                  <p>
+                    - {{ article.source.name }}
+                  </p>
+                </a>
+                <div id="preview-headline-buttons"
+                     fxLayoutAlign="space-between center">
+                  <button [disabled]="!moreArticlesAvailable('prev')"
+                          mat-raised-button
+                          color="accent"
+                          (click)="loadArticlesByIndex('prev')">
+                    Prev
+                  </button>
+                  <button [disabled]="!moreArticlesAvailable('next')"
+                          mat-raised-button
+                          color="accent"
+                          (click)="loadArticlesByIndex('next')">
+                    Next
+                  </button>
+                </div>
+              </div>
+              <div *ngIf="!articles && !errMsg">
+                <mat-spinner
+                  color="accent">
+                </mat-spinner>
+              </div>
+              <div *ngIf="errMsg">
+                <h3>
+                  {{ errMsg }}
+                </h3>
+              </div>
+              <div catCard
+                   id="quickview-category-content"
+                   *ngIf="categoryArticles.length && !errMsg"
+                   aria-label="Categories">
+                <a class="category-preview"
+                   *ngFor="let article of categoryArticles; index as i"
+                   (click)="selectArticle('category', i)"
+                   attr.aria-label="Expand article {{ article.title }}">
+                  <h3>
+                    {{ article.category }}
+                  </h3>
+                  <p>
+                    {{ article.title }}
+                  </p>
+                </a>
+              </div>
+            </app-slide-card>
+          </mat-card-content>
+        </mat-card>
+      </ng-container>
+
+    </section>
+
+  </main>
+
+  <app-footer></app-footer>
+
+</div>
