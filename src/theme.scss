@@ -1,0 +1,35 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+$primary-color         : mat-color($mat-gray, 800);
+$primary-color-light   : mat-color($mat-gray, 300);
+$primary-color-dark    : mat-color($mat-gray, 900);
+$primary-color-medium  : mat-color($mat-gray, 500);
+$secondary-color       : mat-color($mat-green, A200);
+$secondary-color-light : mat-color($mat-green, A100);
+$secondary-color-dark  : mat-color($mat-green, A700);
+$warning               : mat-color($mat-deep-orange, 800);
+
+$business-color        : mat-color($mat-indigo, 500);
+$entertainment-color   : mat-color($mat-purple, 600);
+$general-color         : mat-color($mat-teal, 800);
+$health-color          : mat-color($mat-green, 600);
+$science-color         : mat-color($mat-light-blue, 800);
+$sports-color          : mat-color($mat-red, 600);
+$technology-color      : mat-color($mat-orange, 700);
+
+$app-theme-primary : mat-palette($mat-gray, 800);
+$app-theme-accent  : mat-palette($mat-green, A200);
+$app-theme-warn    : mat-palette($mat-deep-orange, 800);
+
+$min-width: 320px;
+$xs-width: 599px;
+$lg-width: 1279px;
+
+$app-theme: mat-light-theme(
+  $app-theme-primary,
+  $app-theme-accent,
+  $app-theme-warn
+);
+
+@include angular-material-theme($app-theme);
