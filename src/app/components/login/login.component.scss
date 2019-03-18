@@ -1,0 +1,22 @@
+@import "~src/theme.scss";
+
+#loginForm {
+  padding: 0 24px 24px;
+}
+
+.container {
+  height: 100%;
+}
+
+.form-input {
+  width: 100% !important;
+}
+
+header {
+  background-color: $primary-color;
+  height: 15%;
+  padding: 0 24px;
+  color: $secondary-color;
+  font-size: 1.5em;
+  font-weight: bold;
+}

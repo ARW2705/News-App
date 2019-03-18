@@ -1,0 +1,50 @@
+<div class="container" fxLayout="column">
+
+  <header fxLayoutAlign="space-between center">
+    <p>Log In</p>
+    <button mat-icon-button
+            aria-label="Close login form">
+      <mat-icon color="accent"
+                svgIcon="cancel"
+                (click)="closeDialog(false)">
+      </mat-icon>
+    </button>
+  </header>
+
+  <form id="loginForm"
+        [formGroup]="loginForm"
+        fxLayout="column"
+        fxLayoutAlign="space-around"
+        fxFlex="grow"
+        novalidate>
+    <mat-form-field class="form-input"
+                    aria-label="Username">
+      <input matInput
+             placeholder="Username"
+             [formControl]="loginForm.controls.username"
+             cdkFocusInitial>
+      <mat-hint>Enter username or email address</mat-hint>
+      <mat-error *ngIf="loginForm.controls.username.hasError('required')">
+        Username or Email address is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="form-input"
+                    aria-label="Password">
+      <input matInput
+             placeholder="Password"
+             [formControl]="loginForm.controls.password">
+      <mat-error *ngIf="loginForm.controls.password.hasError('required')">
+        Password is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-checkbox formControlName="remember">
+      Remember me
+    </mat-checkbox>
+    <button mat-raised-button
+            (click)="onSubmit()"
+            color="accent">
+      Submit
+    </button>
+  </form>
+
+</div>
