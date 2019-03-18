@@ -1,0 +1,101 @@
+<mat-toolbar color="primary"
+             fxLayout="row"
+             fxLayoutAlign="space-between center"
+             role="toolbar"
+             aria-label="Navigation">
+
+  <ng-container *ngIf="isMobile">
+    <button mat-icon-button
+            [matMenuTriggerFor]="menu"
+            aria-label="Navigation menu toggle button"
+            (click)="menuExpanded = !menuExpanded"
+            aria-controls="main-menu">
+      <mat-icon svgIcon="menu"></mat-icon>
+    </button>
+    <mat-menu id="main-menu"
+              #menu="matMenu"
+              aria-label="Main menu">
+      <button mat-menu-item
+              routerLink="/home"
+              attr.aria-label="Navigate to home page">
+        <mat-icon svgIcon="home"></mat-icon>
+        <span>Home</span>
+      </button>
+      <button mat-menu-item
+              [matMenuTriggerFor]="categories"
+              (click)="categoriesExpanded = !categoriesExpanded"
+              aria-label="Search by category"
+              aria-controls="categories-menu">
+        <mat-icon svgIcon="category"></mat-icon>
+        <span>Categories</span>
+      </button>
+      <button mat-menu-item
+              *ngIf="loggedIn"
+              routerLink="/profile"
+              aria-label="Navigate to profile page">
+        <mat-icon svgIcon="settings"></mat-icon>
+        <span>Profile</span>
+      </button>
+      <button mat-menu-item
+              (click)="loggedIn ? logout(): openLogin()"
+              aria-label="loggedIn ? 'Log out': 'Open login form'">
+        <mat-icon svgIcon="person"></mat-icon>
+        <span>{{ loggedIn ? 'Logout': 'Login' }}</span>
+      </button>
+      <button mat-menu-item
+              *ngIf="!loggedIn"
+              (click)="openSignup()"
+              aria-label="Open signup form">
+        <mat-icon svgIcon="person-add"></mat-icon>
+        <span>Signup</span>
+      </button>
+    </mat-menu>
+  </ng-container>
+
+  <h1 fxFlex="30"
+      fxFlex.lt-sm="">News</h1>
+
+  <ng-container *ngIf="!isMobile">
+    <div id="menu"
+         fxFlex="70"
+         fxLayoutAlign="space-between"
+         aria-label="Main menu">
+      <a routerLink="/home"
+         routerLinkActive="active"
+         fxFlex>Home</a>
+      <a [matMenuTriggerFor]="categories"
+         #categoryMenuTrigger="matMenuTrigger"
+         (mouseenter)="categoryMenuTrigger.openMenu()"
+         fxFlex>Categories</a>
+      <a *ngIf="loggedIn"
+         routerLink="/profile"
+         fxFlex>Profile</a>
+      <a *ngIf="loggedIn"
+         (click)="logout()"
+         fxFlex>Logout</a>
+      <a *ngIf="!loggedIn"
+         (click)="openLogin()"
+         fxFlex
+         aria-label="Open login form">Login</a>
+      <a *ngIf="!loggedIn"
+         (click)="openSignup()"
+         fxFlex
+         aria-label="Open signup form">Signup</a>
+    </div>
+  </ng-container>
+
+  <mat-menu id="categories-menu"
+            #categories="matMenu"
+            aria-label="Categories">
+    <div (mouseleave)="closeNestedMenu('categories')">
+      <ng-container *ngFor="let category of myCategories">
+        <button mat-menu-item
+                (click)="navigateToCategory(category)"
+                attr.aria-label="Navigate to {{ category }} news">
+          {{ category }}
+        </button>
+      </ng-container>
+    </div>
+  </mat-menu>
+
+</mat-toolbar>

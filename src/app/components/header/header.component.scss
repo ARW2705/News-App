@@ -1,0 +1,11 @@
+@import "~src/theme.scss";
+
+#menu a {
+  text-align: center;
+  cursor: pointer;
+  color: $primary-color-light;
+}
+
+.mat-menu-item:hover:not([disabled]) {
+  background: $secondary-color-light;
+}
