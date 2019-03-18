@@ -1,0 +1,43 @@
+@import "~src/theme.scss";
+
+#signup-submit-btn {
+  margin: 15px 0;
+}
+
+#signupForm {
+  padding: 0 24px 24px;
+}
+
+.container {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+.form-input {
+  width: 100% !important;
+}
+
+.option:hover {
+  background-color: $primary-color-light !important;
+}
+
+.mat-option.mat-selected[_ngcontent-c12]:not(.mat-option-multiple):not(.mat-option-disabled) {
+  background-color: $secondary-color-light;
+}
+
+::ng-deep .mat-primary .mat-pseudo-checkbox-checked {
+  background-color: $secondary-color !important;
+}
+
+header {
+  background-color: $primary-color;
+  height: 10%;
+  padding: 0 24px;
+  color: $secondary-color;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+form {
+  margin-top: calc(10% + 15px);
+}

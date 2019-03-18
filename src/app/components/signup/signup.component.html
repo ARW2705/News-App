@@ -1,0 +1,152 @@
+<div class="container" fxLayout="column">
+
+  <header fxLayoutAlign="space-between center">
+    <p>Sign up</p>
+    <button mat-icon-button
+            aria-label="Close signup form">
+      <mat-icon color="accent"
+                svgIcon="cancel"
+                (click)="closeDialog(false)">
+      </mat-icon>
+    </button>
+  </header>
+
+  <form id="signupForm"
+        [formGroup]="signupForm"
+        fxLayout="column"
+        fxLayoutAlign="space-around"
+        fxFlex="grow"
+        novalidate>
+    <!-- Email -->
+    <mat-form-field class="form-input"
+                    aria-label="Email">
+      <input matInput
+             placeholder="Email"
+             [formControl]="controls.email"
+             cdkFocusInitial>
+      <mat-error *ngIf="controls.email.hasError('email') && !controls.email.hasError('required')">
+        Email address is <strong>not</strong> valid
+      </mat-error>
+      <mat-error *ngIf="controls.email.hasError('required')">
+        Email address is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <!-- Username (optional) -->
+    <mat-form-field class="form-input"
+                    aria-label="Username">
+      <input matInput
+             placeholder="Username"
+             [formControl]="controls.username">
+      <mat-hint *ngIf="!controls.username.hasError('minlength')
+                       && !controls.username.hasError('maxlength')">
+        Leave blank to use email address as username
+      </mat-hint>
+      <mat-error *ngIf="controls.username.hasError('minlength')">
+        Username must be <strong>at least</strong> 6 characters long
+      </mat-error>
+      <mat-error *ngIf="controls.username.hasError('maxlength')">
+        Username must be <strong>no more than</strong> 20 characters long
+      </mat-error>
+    </mat-form-field>
+    <!-- Password -->
+    <mat-form-field class="form-input"
+                    aria-label="Password">
+      <input matInput
+             placeholder="Password"
+             [formControl]="controls.password">
+      <mat-error *ngIf="controls.password.hasError('minlength')
+                        && !controls.password.hasError('required')">
+        Password must be <strong>at least</strong> 8 characters long
+      </mat-error>
+      <mat-error *ngIf="controls.password.hasError('passwordInvalid')
+                        && !controls.password.hasError('minlength')
+                        && !controls.password.hasError('required')">
+        Password must have <strong>at least</strong> one letter, one number, and one special character (!@#$%^&*)
+      </mat-error>
+      <mat-error *ngIf="controls.password.hasError('required')">
+        Password is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <!-- Confirm Password -->
+    <mat-form-field class="form-input"
+                    aria-label="Confirm password">
+      <input matInput
+             placeholder="Confirm Password"
+             [formControl]="controls.passwordConfirmation">
+      <mat-error *ngIf="controls.passwordConfirmation.hasError('mismatch')
+                        && !controls.passwordConfirmation.hasError('required')">
+        Passwords do not match
+      </mat-error>
+      <mat-error *ngIf="controls.passwordConfirmation.hasError('required')">
+        Please confirm your password
+      </mat-error>
+    </mat-form-field>
+    <!-- First name -->
+    <mat-form-field class="form-input"
+                    aria-label="First name">
+      <input matInput
+             placeholder="First name"
+             [formControl]="controls.firstname">
+        <mat-error *ngIf="controls.firstname.hasError('maxlength')">
+          Please limit name to 25 characters
+        </mat-error>
+    </mat-form-field>
+    <!-- Last name -->
+    <mat-form-field class="form-input"
+                    aria-label="Last name">
+      <input matInput
+             placeholder="Last name"
+             [formControl]="controls.lastname">
+      <mat-error *ngIf="controls.lastname.hasError('maxlength')">
+        Please limit name to 25 characters
+      </mat-error>
+    </mat-form-field>
+    <!-- Select Country -->
+    <mat-form-field class="form-input"
+                    aria-label="Select preferred country">
+      <mat-select placeholder="Select Country"
+                  [formControl]="controls.country">
+        <mat-option *ngFor="let country of countries"
+                    class="option"
+                    [value]="country.code">
+          {{ country.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <!-- Select Language -->
+    <mat-form-field class="form-input"
+                    aria-label="Select preferred language">
+      <mat-select placeholder="Select Language"
+                  [formControl]="controls.language">
+        <mat-option *ngFor="let language of languages"
+                    class="option"
+                    [value]="language.code">
+          {{ language.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <!-- Select Sources -->
+    <mat-form-field class="form-input"
+                    *ngIf="sources"
+                    aria-label="Select preferred sources">
+      <mat-select placeholder="Select Preferred Sources"
+                  [formControl]="controls.preferredSources"
+                  multiple>
+        <mat-option *ngFor="let source of sources"
+                    class="option"
+                    [value]="source.id">
+          {{ source.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <!-- Submit -->
+    <button mat-raised-button
+            id="signup-submit-btn"
+            [disabled]="!signupForm.valid"
+            (click)="onSubmit()"
+            color="accent">
+      Submit
+    </button>
+  </form>
+
+</div>
