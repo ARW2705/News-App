@@ -1,0 +1,15 @@
+<mat-toolbar color="primary"
+             fxLayout="row"
+             fxLayoutAlign="space-between center"
+             fxLayout.lt-sm="column"
+             fxLayoutAlign.lt-sm="center center"
+             role="toolbar">
+  <a [href]="githubURL"
+     aria-label="View codebase for this website">
+    {{ github }}
+    <fa-icon [icon]="['fab', 'github']"
+             aria-hidden="true">
+    </fa-icon>
+  </a>
+  <a [href]="attributionURL">{{ attribution }}</a>
+</mat-toolbar>
