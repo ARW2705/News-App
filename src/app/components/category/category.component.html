@@ -1,0 +1,113 @@
+<div class="container" fxLayout="column">
+
+  <app-header></app-header>
+
+  <header id="jumbotron">
+    <h2>
+      <span [ngClass]="categoryClass">
+        {{ category }}
+      </span>
+      News
+    </h2>
+  </header>
+
+  <main class="content"
+        fxLayout="column"
+        fxFlex="grow"
+        fxLayoutGap="20px">
+
+    <section *ngIf="articles && !errMsg">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            {{ articles[0].title }}
+          </mat-card-title>
+          <mat-card-subtitle>
+            {{ articles[0].source.name }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <img id="article-image"
+             mat-card-image
+             (error)="imageError($event)"
+             src="{{ articles[0].urlToImage }}"
+             alt="{{ articles[0].title }}">
+        <mat-card-content>
+          <article id="article-content">
+            <h4>{{ articles[0].author }}</h4>
+            <p>{{ articles[0].content }}</p>
+            <a target="_blank"
+               href="{{ articles[0].url }}"
+               aria-label="Read more about this article">
+              <button mat-raised-button
+                      color="accent">
+                Read More
+              </button>
+            </a>
+          </article>
+        </mat-card-content>
+      </mat-card>
+      <ng-container *ngIf="!articles && !errMsg">
+        <mat-spinner></mat-spinner>
+      </ng-container>
+    </section>
+
+    <ng-container *ngIf="errMsg">
+      <app-error-message [error]="errMsg"></app-error-message>
+    </ng-container>
+
+    <h3 id="browse-article-header">
+      Browsing news for <span [ngClass]="categoryClass">{{ category }}</span>
+    </h3>
+
+    <section *ngIf="articles && !errMsg"
+             fxLayout="column"
+             fxLayoutGap="10px">
+      <ng-container *ngFor="let article of articles | slice:1">
+        <mat-card class="articles-card">
+          <a class="articles-link"
+             target="_blank"
+             [href]="article.url"
+             fxLayout="row"
+             fxLayoutAlign="space-between center"
+             fxLayout.lt-sm="column">
+            <div class="article-text"
+                 fxFlex="55"
+                 fxLayout="column"
+                 fxLayoutAlign="space-between start"
+                 fxFlex.lt-sm="95"
+                 fxFlexOrder.lt-sm="2">
+              <mat-card-header>
+                <mat-card-title>
+                  <h4>{{ article.title }}</h4>
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <article>
+                  <p>
+                    {{ article.publishedAt | date:'longDate' }} ● {{ article.content }}
+                  </p>
+                </article>
+              </mat-card-content>
+            </div>
+            <img class="articles-image"
+                 mat-card-image
+                 [src]="article.urlToImage"
+                 (error)="imageError($event)"
+                 fxFlex.lt-sm="95"
+                 fxFlexOrder.lt-sm="1">
+          </a>
+        </mat-card>
+      </ng-container>
+    </section>
+
+    <button mat-raised-button
+            color="accent"
+            *ngIf="moreArticlesAvailable()"
+            (click)="loadMoreArticles()">
+      Load more articles
+    </button>
+  </main>
+
+  <app-footer></app-footer>
+
+</div>

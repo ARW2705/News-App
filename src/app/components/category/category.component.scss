@@ -1,0 +1,57 @@
+@import "~src/theme.scss";
+@import "~src/styles.scss";
+
+#jumbotron {
+  margin: 2%;
+  background-color: white;
+  border-radius: 10px;
+  h2 {
+    color: $primary-color-dark;
+    margin: 0.5em;
+  }
+}
+
+#browse-article-header {
+  border-bottom: 1px solid $primary-color-medium;
+}
+
+.content {
+  margin: 2% !important;
+}
+
+.articles-card {
+  mat-card-content {
+    margin: 0;
+  }
+
+  ::ng-deep .mat-card-header-text {
+    margin: 0 auto !important;
+  }
+
+  h4 {
+    margin: 0;
+  }
+}
+
+.mat-card-title {
+  font-size: 1.8em !important;
+}
+
+.articles-image {
+  height: 100%;
+  max-width: 240px;
+  max-height: 240px;
+  margin: 0;
+}
+
+.article-source {
+  margin-bottom: 0;
+}
+
+@media screen and (max-width: $xs-width) {
+  .articles-image {
+    max-width: 80%;
+    max-height: 50%;
+    margin: 0 auto 15px;
+  }
+}
