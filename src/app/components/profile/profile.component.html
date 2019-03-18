@@ -1,0 +1,238 @@
+<div class="container" fxLayout="column">
+
+  <app-header></app-header>
+
+  <main *ngIf="user && !errMsg"
+        class="content"
+        fxLayout="column"
+        fxFlex="grow">
+    <form id="profile-form"
+          [formGroup]="profileForm"
+          fxLayout="column"
+          fxLayoutAlign="space-around"
+          fxFlex="grow"
+          novalidate>
+      <mat-accordion>
+
+
+        <!-- Email -->
+        <mat-expansion-panel>
+
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Email
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ user.email }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="form-input"
+                          *ngIf="editingEmail"
+                          aria-label="Email">
+            <input matInput
+                   placeholder="Email"
+                   [formControl]="controls.email">
+            <mat-error *ngIf="controls.email.hasError('email') && !controls.email.hasError('required')">
+              Email address is <strong>not</strong> valid
+            </mat-error>
+            <mat-error *ngIf="controls.email.hasError('required')">
+              Email address is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+        </mat-expansion-panel>
+
+
+        <!-- Username -->
+        <mat-expansion-panel>
+
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Username
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ user.username }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="form-input"
+                          aria-label="Username">
+            <input matInput
+                   placeholder="Username"
+                   [formControl]="controls.username">
+            <mat-hint *ngIf="!controls.username.hasError('minlength')
+                             && !controls.username.hasError('maxlength')">
+              Leave blank to use email address as username
+            </mat-hint>
+            <mat-error *ngIf="controls.username.hasError('minlength')">
+              Username must be <strong>at least</strong> 6 characters long
+            </mat-error>
+            <mat-error *ngIf="controls.username.hasError('maxlength')">
+              Username must be <strong>no more than</strong> 20 characters long
+            </mat-error>
+          </mat-form-field>
+
+        </mat-expansion-panel>
+
+
+        <!-- First name -->
+        <mat-expansion-panel>
+
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              First name
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ user.firstname }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="form-input"
+                          aria-label="First name">
+            <input matInput
+                   placeholder="First name"
+                   [formControl]="controls.firstname">
+              <mat-error *ngIf="controls.firstname.hasError('maxlength')">
+                Please limit name to 25 characters
+              </mat-error>
+          </mat-form-field>
+
+        </mat-expansion-panel>
+
+
+        <!-- Last name -->
+        <mat-expansion-panel>
+
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Last name
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ user.lastname }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="form-input"
+                          aria-label="Last name">
+            <input matInput
+                   placeholder="Last name"
+                   [formControl]="controls.lastname">
+            <mat-error *ngIf="controls.lastname.hasError('maxlength')">
+              Please limit name to 25 characters
+            </mat-error>
+          </mat-form-field>
+
+        </mat-expansion-panel>
+
+
+        <!-- Select Country -->
+        <mat-expansion-panel>
+
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Country
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ user.country }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="form-input"
+                          aria-label="Select preferred country">
+            <mat-select placeholder="Select Country"
+                        [formControl]="controls.country">
+              <mat-option *ngFor="let country of countries"
+                          class="option"
+                          [value]="country.code">
+                {{ country.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        </mat-expansion-panel>
+
+
+        <!-- Select Language -->
+        <mat-expansion-panel>
+
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Language
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ user.language }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="form-input"
+                          aria-label="Select preferred language">
+            <mat-select placeholder="Select Language"
+                        [formControl]="controls.language">
+              <mat-option *ngFor="let language of languages"
+                          class="option"
+                          [value]="language.code">
+                {{ language.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        </mat-expansion-panel>
+
+
+        <!-- Select Sources -->
+        <mat-expansion-panel>
+
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Sources
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="form-input"
+                          *ngIf="sources"
+                          aria-label="Select preferred sources">
+            <mat-select placeholder="Select Preferred Sources"
+                        [formControl]="controls.preferredSources"
+                        multiple>
+              <mat-option *ngFor="let source of sources"
+                          class="option"
+                          [value]="source.id">
+                {{ source.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        </mat-expansion-panel>
+
+      <!-- Submit -->
+      <button mat-raised-button
+              id="profile-update-btn"
+              (click)="onUpdate()"
+              color="accent">
+        Update
+      </button>
+      </mat-accordion>
+    </form>
+  </main>
+
+  <main *ngIf="!user && !errMsg"
+        class="content"
+        fxLayout="column"
+        fxFlex="grow">
+    <h2>You must be logged in to view your profile</h2>
+    <button mat-menu-item
+            (click)="openLogin()"
+            aria-label="Open login form">
+      <mat-icon svgIcon="person"></mat-icon>
+      <span>Log in</span>
+    </button>
+  </main>
+
+  <ng-container *ngIf="errMsg">
+    <app-error-message [error]="errMsg"></app-error-message>
+  </ng-container>
+
+  <app-footer></app-footer>
+
+</div>
