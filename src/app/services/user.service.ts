@@ -26,37 +26,90 @@ interface JWTResponse {
   providedIn: 'root'
 })
 export class UserService {
-  private loggedIn: boolean = false;
-  private alertsActive: boolean = false;
-  private tokenKey: string = 'JWT';
-  private username: Subject<string> = new Subject<string>();
-  private publicUsername: string = '';
-  private authToken: string = undefined;
+  loggedIn: boolean = false;
+  alertsActive: boolean = false;
+  tokenKey: string = 'JWT';
+  username: Subject<string> = new Subject<string>();
+  publicUsername: string = '';
+  authToken: string = undefined;
   @Output() refreshLogin: EventEmitter<boolean> = new EventEmitter();
 
-  constructor(private http: HttpClient,
-    private processHttpError: ProcessHttpErrorService,
-    protected localStorage: LocalStorage) { }
+  constructor(public http: HttpClient,
+    public processHttpError: ProcessHttpErrorService,
+    public localStorage: LocalStorage) { }
 
-  isLoggedIn() {
-    return this.loggedIn;
-  }
-
-  refreshOnLoginLogout() {
-    this.refreshLogin.emit(this.loggedIn);
-  }
-
-  areAlertsActive() {
+  areAlertsActive(): boolean {
     return this.alertsActive;
   }
 
-  setAlertsActive(on: boolean) {
-    this.alertsActive = on;
+  // Set username Subject to undefined
+  clearUsername(): void {
+    this.username.next(undefined);
   }
 
-  signup(user: User): Observable<any> {
-    return this.http.post(baseURL + apiVersion + 'users/signup', user)
+  // Check server for JWT validity
+  checkJWTtoken(): void {
+    this.http.get<JWTResponse>(baseURL + apiVersion + 'users/checkJWTtoken')
+      .subscribe(
+        res => {
+          this.sendUsername(res.user.username);
+        },
+        () => {
+          this.destroyUserCredentials();
+      });
+  }
+
+  destroyUserCredentials(): void {
+    this.authToken = undefined;
+    this.clearUsername();
+    this.loggedIn = false;
+    this.localStorage.removeItem(this.tokenKey)
+      .subscribe(() => {
+        this.refreshOnLoginLogout();
+      });
+  }
+
+  getPublicUsername(): string {
+    return this.publicUsername;
+  }
+
+  // Get JWT
+  getToken(): string {
+    return this.authToken;
+  }
+
+  // getUsername(): Observable<string> {
+  //   return this.username.asObservable();
+  // }
+
+  /**
+   * Get user profile from server
+   *
+   * @return: Observable of user profile
+  **/
+  getUserProfile(): Observable<any> {
+    return this.http.get(baseURL + apiVersion + 'users/profile')
       .pipe(catchError(err => this.processHttpError.handleError(err)));
+  }
+
+  isLoggedIn(): boolean {
+    return this.loggedIn;
+  }
+
+  // Get username and token from storage
+  loadUserCredentials(): void {
+    this.localStorage.getItem(this.tokenKey)
+      .subscribe(key => {
+        if (key) {
+          const credentials = JSON.parse(key);
+          if (credentials && credentials.username != undefined) {
+            this.useCredentials(credentials);
+            if (this.authToken) this.checkJWTtoken();
+          }
+        } else {
+          console.log('Token key not defined');
+        }
+      });
   }
 
   login(user: User): Observable<any> {
@@ -73,90 +126,87 @@ export class UserService {
       .pipe(catchError(err => this.processHttpError.handleError(err)));
   }
 
-  logout() {
+  logout(): void {
     this.destroyUserCredentials();
   }
 
-  checkJWTtoken() {
-    this.http.get<JWTResponse>(baseURL + apiVersion + 'users/checkJWTtoken')
-      .subscribe(
-        res => {
-          this.sendUsername(res.user.username);
-        },
-        () => {
-          this.destroyUserCredentials();
-      });
+  // Emit event when login status changes
+  refreshOnLoginLogout(): void {
+    this.refreshLogin.emit(this.loggedIn);
   }
 
-  sendUsername(name: string) {
+  /**
+   * Start password reset process
+   *
+   * @return: Observable with message for user about reset process
+  **/
+  resetPassword(): Observable<any> {
+    return this.http.post(baseURL + apiVersion + 'users/reset-password', {})
+      .pipe(catchError(err => this.processHttpError.handleError(err)));
+  }
+
+  /**
+   * Toggle alerts activation
+   *
+   * @params: on - true if alerts should be active
+  **/
+  setAlertsActive(on: boolean): void {
+    this.alertsActive = on;
+  }
+
+  /**
+   * Apply name to username Subject
+   *
+   * @params: name - name to apply to Subject
+  **/
+  sendUsername(name: string): void {
     this.username.next(name);
   }
 
-  clearUsername() {
-    this.username.next(undefined);
+  /**
+   * Submit user signup
+   *
+   * @params: user - new user to create an account
+   *
+   * @return: Observable of newly created user
+  **/
+  signup(user: User): Observable<any> {
+    return this.http.post(baseURL + apiVersion + 'users/signup', user)
+      .pipe(catchError(err => this.processHttpError.handleError(err)));
   }
 
-  getUsername(): Observable<string> {
-    return this.username.asObservable();
-  }
-
-  getPublicUsername(): string {
-    return this.publicUsername;
-  }
-
-  getToken(): string {
-    return this.authToken;
-  }
-
-  loadUserCredentials() {
-    this.localStorage.getItem(this.tokenKey)
-      .subscribe(key => {
-        if (key) {
-          const credentials = JSON.parse(key);
-          if (credentials && credentials.username != undefined) {
-            this.useCredentials(credentials);
-            if (this.authToken) this.checkJWTtoken();
-          }
-        } else {
-          console.log('Token key not defined');
-        }
-      });
-  }
-
-  storeUserCredentials(credentials: any) {
+  /**
+   * Store user credentials in idb
+   *
+   * @params: credentials - username and JWT
+  **/
+  storeUserCredentials(credentials: any): void {
     this.localStorage.setItem(this.tokenKey, JSON.stringify(credentials));
     this.useCredentials(credentials);
   }
 
-  useCredentials(credentials: any) {
+  /**
+   * Patch user profile
+   *
+   * @params: user - user object with updates
+   *
+   * @return: Observable of updated user
+  **/
+  updateUserProfile(user: User): Observable<any> {
+    return this.http.patch(baseURL + apiVersion + 'users/profile', user)
+      .pipe(catchError(err => this.processHttpError.handleError(err)));
+  }
+
+  /**
+   * Apply user credentials
+   *
+   * @params: credentials - username and JWT
+  **/
+  useCredentials(credentials: any): void {
     this.loggedIn = true;
     this.publicUsername = credentials.username;
     this.sendUsername(credentials.username);
     this.authToken = credentials.token;
   }
 
-  destroyUserCredentials() {
-    this.authToken = undefined;
-    this.clearUsername();
-    this.loggedIn = false;
-    this.localStorage.removeItem(this.tokenKey)
-      .subscribe(() => {
-        this.refreshOnLoginLogout();
-      });
-  }
-
-  resetPassword(): Observable<any> {
-    return this.http.post(baseURL + apiVersion + 'users/reset-password', {})
-      .pipe(catchError(err => this.processHttpError.handleError(err)));
-  }
-
-  getUserProfile(): Observable<any> {
-    return this.http.get(baseURL + apiVersion + 'users/profile')
-      .pipe(catchError(err => this.processHttpError.handleError(err)));
-  }
-
-  updateUserProfile(user: User): Observable<any> {
-    return this.http.patch(baseURL + apiVersion + 'users/profile', user)
-      .pipe(catchError(err => this.processHttpError.handleError(err)));
-  }
 }

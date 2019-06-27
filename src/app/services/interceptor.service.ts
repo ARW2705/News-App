@@ -16,7 +16,7 @@ import { UserService } from './user.service';
 })
 export class AuthInterceptorService implements HttpInterceptor {
 
-  constructor(private inj: Injector) {}
+  constructor(public inj: Injector) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const userService = this.inj.get(UserService);
@@ -28,7 +28,7 @@ export class AuthInterceptorService implements HttpInterceptor {
 
 @Injectable()
 export class UnauthInterceptorService implements HttpInterceptor {
-  constructor(private inj: Injector) {}
+  constructor(public inj: Injector) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const userService = this.inj.get(UserService);

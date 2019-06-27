@@ -9,6 +9,7 @@ export class ProcessHttpErrorService {
 
   constructor() { }
 
+  // Format http error response
   handleError(error: HttpErrorResponse | any) {
     let errMsg: string;
     if (error instanceof HttpErrorResponse) {
