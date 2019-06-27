@@ -9,7 +9,8 @@ party API.
 
 ## Usage
 
-After cloning repo, install modules with `npm install`, then run test server with `ng serve`. App can be viewed at `localhost:4200`
+After cloning repo, install modules with `npm install`, then run test server with `ng serve`. App can be viewed at `localhost:4200`. App is used in conjunction with
+[News Server](https://github.com/ARW2705/News-Server)
 
 ## TODO
 
