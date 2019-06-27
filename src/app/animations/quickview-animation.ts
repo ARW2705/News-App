@@ -1,5 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
+// Slide card left / right
 export function slideCard() {
   return trigger('slide', [
     state('top', style({
