@@ -13,34 +13,21 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./category.component.scss']
 })
 export class CategoryComponent implements OnInit {
-  private category: string = '';
-  private articles: Article[] = null;
-  private stored: Article[] = [];
-  private totalResults: number = 0;
-  private articlesPerPage: number = 20;
-  private pageIndex: number = 1;
+  category: string = '';
+  articles: Article[] = null;
+  stored: Article[] = [];
+  totalResults: number = 0;
+  articlesPerPage: number = 20;
+  pageIndex: number = 1;
   categoryClass: string = '';
   errMsg: string = '';
 
-  constructor(private newsService: NewsService,
-    private route: ActivatedRoute,
-    private userService: UserService) { }
+  constructor(public newsService: NewsService,
+    public route: ActivatedRoute,
+    public userService: UserService) { }
 
-  ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      this.articles = null;
-      this.category = params.category;
-      this.categoryClass = `${this.category.toLowerCase()}-color`;
-      this.getArticlesByCategory();
-    });
-    this.userService.refreshLogin.subscribe(status => {
-      if (status) {
-
-      }
-    });
-  }
-
-  getArticlesByCategory() {
+  // Get headlines by set component category
+  getArticlesByCategory(): void {
     this.newsService.getHeadlinesByCategory(this.category, this.articlesPerPage)
       .subscribe(
         response => {
@@ -59,7 +46,8 @@ export class CategoryComponent implements OnInit {
       );
   }
 
-  getPreferredArticlesByCategory() {
+  // Get articles using user's preferred settings (settings applied server side)
+  getPreferredArticlesByCategory():void {
     this.newsService.getPreferredByCategory(this.category, this.articlesPerPage)
       .subscribe(
         response => {
@@ -78,11 +66,34 @@ export class CategoryComponent implements OnInit {
       );
   }
 
-  moreArticlesAvailable() {
+  // On image not found error, replace with default photo
+  imageError(event: any): void {
+    event.target.src = photoNotFound;
+    event.target.classList.add('photo-not-found');
+  }
+
+  // True if there are more articles that can be displayed
+  moreArticlesAvailable(): boolean {
     return this.pageIndex < Math.ceil(this.totalResults / this.articlesPerPage);
   }
 
-  loadMoreArticles() {
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      this.articles = null;
+      this.category = params.category;
+      this.categoryClass = `${this.category.toLowerCase()}-color`;
+      this.getArticlesByCategory();
+    });
+    this.userService.refreshLogin.subscribe(status => {
+      if (status) {
+        this.articles = null;
+        this.getArticlesByCategory();
+      }
+    });
+  }
+
+  // Get next page of articles by category
+  loadMoreArticles(): void {
     this.newsService.getHeadlinesByCategory(this.category, this.articlesPerPage, this.pageIndex + 1)
       .subscribe(
         response => {
@@ -97,7 +108,8 @@ export class CategoryComponent implements OnInit {
       );
   }
 
-  loadMorePreferredArticles() {
+  // Get next page of preferred settings articles by category (settings applied server side)
+  loadMorePreferredArticles():void {
     this.newsService.getPreferredByCategory(this.category, this.articlesPerPage, this.pageIndex + 1)
       .subscribe(
         response => {
@@ -110,11 +122,6 @@ export class CategoryComponent implements OnInit {
           this.errMsg = err;
         }
       );
-  }
-
-  imageError(event: any) {
-    event.target.src = photoNotFound;
-    event.target.classList.add('photo-not-found');
   }
 
 }

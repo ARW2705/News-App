@@ -17,8 +17,8 @@ import { NewsService } from '../../services/news.service';
   styleUrls: ['./signup.component.scss']
 })
 export class SignupComponent implements OnInit {
-  private signupForm: FormGroup;
-  private user: User;
+  signupForm: FormGroup;
+  user: User;
   controls;
   sources: Source[] = [];
   countries = Countries;
@@ -26,10 +26,10 @@ export class SignupComponent implements OnInit {
   errMsg = '';
   toggleColor = 'accent';
 
-  constructor(private userService: UserService,
-    private newsService: NewsService,
-    private formBuilder: FormBuilder,
-    private dialogRef: MatDialogRef<SignupComponent>) {
+  constructor(public userService: UserService,
+    public newsService: NewsService,
+    public formBuilder: FormBuilder,
+    public dialogRef: MatDialogRef<SignupComponent>) {
       this.signupForm = this.formBuilder.group({
         email: ['', [Validators.required, Validators.email]],
         username: ['', [Validators.minLength(6), Validators.maxLength(20)]],
@@ -46,6 +46,10 @@ export class SignupComponent implements OnInit {
       this.controls = this.signupForm.controls;
     }
 
+  closeDialog(success: boolean): void {
+    this.dialogRef.close(success);
+  }
+
   ngOnInit() {
     this.newsService.getSources()
       .subscribe(
@@ -57,11 +61,7 @@ export class SignupComponent implements OnInit {
       });
   }
 
-  closeDialog(success: boolean) {
-    this.dialogRef.close(success);
-  }
-
-  onSubmit() {
+  onSubmit(): void {
     this.user = this.signupForm.value;
     if (!this.user.username) {
       this.user.username = this.user.email;

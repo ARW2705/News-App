@@ -12,30 +12,28 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-  private loginForm: FormGroup;
-  private user: User;
+  loginForm: FormGroup;
+  user: User;
   errMsg = '';
 
-  constructor(private dialogRef: MatDialogRef<LoginComponent>,
-    private userService: UserService,
-    private formBuilder: FormBuilder) {
+  constructor(public dialogRef: MatDialogRef<LoginComponent>,
+    public userService: UserService,
+    public formBuilder: FormBuilder) {
     this.loginForm = this.formBuilder.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required]],
       remember: false
     });
-    console.log(this.loginForm);
-  }
-
-  ngOnInit() {
   }
 
   closeDialog(success: boolean) {
     this.dialogRef.close(success);
   }
 
+  ngOnInit() {
+  }
+
   onSubmit() {
-    console.log('form', this.loginForm.value);
     this.user = this.loginForm.value;
     this.userService.login(this.user)
       .subscribe(

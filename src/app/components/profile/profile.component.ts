@@ -16,7 +16,7 @@ import { NewsService } from '../../services/news.service';
   encapsulation: ViewEncapsulation.None
 })
 export class ProfileComponent implements OnInit {
-  private profileForm: FormGroup;
+  profileForm: FormGroup;
   user: User;
   controls;
   sources: Source[] = [];
@@ -24,28 +24,16 @@ export class ProfileComponent implements OnInit {
   languages = Languages;
   errMsg: string;
 
-  constructor(private formBuilder: FormBuilder,
-    private userService: UserService,
-    private newsService: NewsService) { }
+  constructor(public formBuilder: FormBuilder,
+    public userService: UserService,
+    public newsService: NewsService) { }
 
-  ngOnInit() {
-    this.userService.refreshLogin.subscribe(status => {
-      console.log('detected login change');
-      if (status) {
-        this.getProfile();
-      }
-    });
-    if (this.userService.isLoggedIn()) {
-      this.getProfile();
-    }
-  }
-
-  getProfile() {
+  // Get user profile and map to profile form
+  getProfile(): void {
     this.userService.getUserProfile()
       .subscribe(
         user => {
           this.user = user;
-          console.log(user)
           this.profileForm = this.formBuilder.group({
             email: [user.email, [Validators.required, Validators.email]],
             username: [user.username, [Validators.minLength(6), Validators.maxLength(20)]],
@@ -71,12 +59,25 @@ export class ProfileComponent implements OnInit {
       });
   }
 
-  resetPassword() {
-    this.userService.resetPassword()
+  ngOnInit() {
+    this.userService.refreshLogin.subscribe(status => {
+      if (status) {
+        this.getProfile();
+      }
+    });
+    if (this.userService.isLoggedIn()) {
+      this.getProfile();
+    }
+  }
+
+  // Submit profile update
+  onUpdate(): void {
+    const update = this.profileForm.value;
+    this.userService.updateUserProfile(update)
       .subscribe(
         status => {
-          if (status.statuCode == 200) {
-            // show reset notification
+          if (status.success) {
+            // TODO show success notification
           }
         },
         err => {
@@ -85,14 +86,13 @@ export class ProfileComponent implements OnInit {
       );
   }
 
-  onUpdate() {
-    const update = this.profileForm.value;
-    console.log(update);
-    this.userService.updateUserProfile(update)
+  // Begin password reset process
+  resetPassword(): void {
+    this.userService.resetPassword()
       .subscribe(
         status => {
-          if (status.success) {
-            // show success notification
+          if (status.statuCode == 200) {
+            // show reset notification
           }
         },
         err => {

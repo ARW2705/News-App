@@ -2,13 +2,10 @@ import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatMenuTrigger, MatDialog } from '@angular/material';
 
-// Constants
 import { categories } from '../../shared/categories';
 
-// Services
 import { UserService } from '../../services/user.service';
 
-// Components
 import { LoginComponent } from '../login/login.component';
 import { SignupComponent } from '../signup/signup.component';
 
@@ -18,15 +15,40 @@ import { SignupComponent } from '../signup/signup.component';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-  private isMobile: boolean = false;
+  isMobile: boolean = false;
   loggedIn: boolean = false;
   myCategories: string[] = categories;
   @ViewChild('categoryMenuTrigger') categoryMenuTrigger: MatMenuTrigger;
   @ViewChild('alertMenuTrigger') alertMenuTrigger: MatMenuTrigger;
 
-  constructor(private userService: UserService,
-    private router: Router,
+  constructor(public userService: UserService,
+    public router: Router,
     public dialog: MatDialog) { }
+
+  // Close nested header menus when on mouse leave - desktop only
+  closeNestedMenu(menu: string):void {
+    if (!this.isMobile) {
+      switch (menu) {
+        case 'categories':
+          this.categoryMenuTrigger.closeMenu();
+          break;
+        case 'alerts':
+          this.alertMenuTrigger.closeMenu();
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  logout() {
+    this.userService.logout();
+  }
+
+  // Navigate to articles by category page with chosen category
+  navigateToCategory(category: string) {
+    this.router.navigate(['/category'], {queryParams: {category: category}});
+  }
 
   ngOnInit() {
     this.setIsMobile();
@@ -36,15 +58,13 @@ export class HeaderComponent implements OnInit {
     });
   }
 
+  // Check if screen is mobile sized on window resize event
   @HostListener('window:resize', ['$event'])
   onResize() {
     this.setIsMobile();
   }
 
-  setIsMobile() {
-    this.isMobile = window.innerWidth < 599;
-  }
-
+  // Open login modal
   openLogin() {
     const loginRef = this.dialog.open(
       LoginComponent,
@@ -61,6 +81,7 @@ export class HeaderComponent implements OnInit {
       });
   }
 
+  // Open signup modal
   openSignup() {
     const signupRef = this.dialog.open(
       SignupComponent,
@@ -80,27 +101,9 @@ export class HeaderComponent implements OnInit {
       });
   }
 
-  logout() {
-    this.userService.logout();
-  }
-
-  closeNestedMenu(menu: string) {
-    if (!this.isMobile) {
-      switch (menu) {
-        case 'categories':
-          this.categoryMenuTrigger.closeMenu();
-          break;
-        case 'alerts':
-          this.alertMenuTrigger.closeMenu();
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  navigateToCategory(category: string) {
-    this.router.navigate(['/category'], {queryParams: {category: category}});
+  // Assign isMobile as having a screen width < 599px
+  setIsMobile() {
+    this.isMobile = window.innerWidth < 599;
   }
 
 }
