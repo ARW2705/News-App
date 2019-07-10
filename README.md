@@ -1,6 +1,6 @@
 # News App
 
-Work in Progress
+**Work in Progress**
 
 This Angular application utilizes NewsAPI to provide an aggregation of various news articles of the day. The application is intended to practice creating an angular app using a third party API.
 
@@ -16,6 +16,8 @@ View a [demo](http://andrew-wanex.com/news-app/)
 
 * Implement news alerts
 * Implement password reset (via email)
+* Add tests
+* Add documentation
 
 ## Author
 
